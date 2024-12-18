@@ -18,7 +18,7 @@ class BaseDataset(Dataset):
     You need to update the path to each dataset in utils/config.py.
     """
 
-    def __init__(self, options, dataset, ignore_3d=False, use_augmentation=True, is_train=True):
+    def __init__(self, options, dataset, ignore_3d=False, use_augmentation=False, is_train=True):
         super(BaseDataset, self).__init__()
         self.dataset = dataset
         self.is_train = is_train
@@ -47,8 +47,8 @@ class BaseDataset(Dataset):
         
         # Get gt SMPL parameters, if available
         try:
-            self.pose = self.data['pose'].astype(np.float)
-            self.betas = self.data['shape'].astype(np.float)
+            self.pose = self.data['pose'].astype(np.float32)
+            self.betas = self.data['shape'].astype(np.float32)
             if 'has_smpl' in self.data:
                 self.has_smpl = self.data['has_smpl']
             else:
@@ -182,6 +182,7 @@ class BaseDataset(Dataset):
         
         # Load image
         imgname = join(self.img_dir, self.imgname[index])
+        # print(f'Loading image {imgname}')
         try:
             img = cv2.imread(imgname)[:,:,::-1].copy().astype(np.float32)
         except TypeError:

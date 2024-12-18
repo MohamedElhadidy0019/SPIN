@@ -38,6 +38,10 @@ class Trainer(BaseTrainer):
         self.models_dict = {'model': self.model}
         self.optimizers_dict = {'optimizer': self.optimizer}
         self.focal_length = constants.FOCAL_LENGTH
+        self.focal_length = 70
+        # vof =0
+        # image_height = 224
+        # self.focal_length = image_height / (2 * np.tan(vof / 2))
 
         # Initialize SMPLify fitting module
         self.smplify = SMPLify(step_size=1e-2, batch_size=self.options.batch_size, num_iters=self.options.num_smplify_iters, focal_length=self.focal_length)
@@ -110,12 +114,16 @@ class Trainer(BaseTrainer):
 
         # Get data from the batch
         images = input_batch['img'] # input image
-        gt_keypoints_2d = input_batch['keypoints'] # 2D keypoints
-        gt_pose = input_batch['pose'] # SMPL pose parameters
-        gt_betas = input_batch['betas'] # SMPL beta parameters
-        gt_joints = input_batch['pose_3d'] # 3D pose
-        has_smpl = input_batch['has_smpl'].byte() # flag that indicates whether SMPL parameters are valid
-        has_pose_3d = input_batch['has_pose_3d'].byte() # flag that indicates whether 3D pose is valid
+        torch.save(images, "images.pt")
+
+        gt_keypoints_2d = input_batch['keypoints'] # 2D keypoints  # 49x3 shape #? exists in coco,first 24 from coco, 25 from openpose
+        torch.save(gt_keypoints_2d, "gt_keypoints_2d.pt")
+
+        gt_pose = input_batch['pose'] # SMPL pose parameters  # shape of 72 #! false in coco
+        gt_betas = input_batch['betas'] # SMPL beta parameters # shape of 10 #! false in coco
+        gt_joints = input_batch['pose_3d'] # 3D pose # shape of 24x4 #! false in coco
+        has_smpl = input_batch['has_smpl'].byte() # flag that indicates whether SMPL parameters are valid #! false in coco
+        has_pose_3d = input_batch['has_pose_3d'].byte() # flag that indicates whether 3D pose is valid #! false in coco
         is_flipped = input_batch['is_flipped'] # flag that indicates whether image was flipped during data augmentation
         rot_angle = input_batch['rot_angle'] # rotation angle used for data augmentation
         dataset_name = input_batch['dataset_name'] # name of the dataset the image comes from
@@ -124,9 +132,9 @@ class Trainer(BaseTrainer):
 
         # Get GT vertices and model joints
         # Note that gt_model_joints is different from gt_joints as it comes from SMPL
-        gt_out = self.smpl(betas=gt_betas, body_pose=gt_pose[:,3:], global_orient=gt_pose[:,:3])
-        gt_model_joints = gt_out.joints
-        gt_vertices = gt_out.vertices
+        gt_out = self.smpl(betas=gt_betas, body_pose=gt_pose[:,3:], global_orient=gt_pose[:,:3]) #! false in coco
+        gt_model_joints = gt_out.joints #! false in coco
+        gt_vertices = gt_out.vertices #! false in coco
 
         # Get current best fits from the dictionary
         opt_pose, opt_betas = self.fits_dict[(dataset_name, indices.cpu(), rot_angle.cpu(), is_flipped.cpu())]

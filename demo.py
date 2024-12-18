@@ -38,9 +38,9 @@ import config
 import constants
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--checkpoint', required=True, help='Path to pretrained checkpoint')
-parser.add_argument('--img', type=str, required=True, help='Path to input image')
-parser.add_argument('--bbox', type=str, default=None, help='Path to .json file containing bounding box coordinates')
+parser.add_argument('--checkpoint', required=False, default='data/model_checkpoint.pt', help='Path to pretrained checkpoint')
+parser.add_argument('--img', type=str, required=False, default='examples/im1010.jpg', help='Path to input image')
+parser.add_argument('--bbox', type=str, default='examples/im1010_bbox.json', help='Path to .json file containing bounding box coordinates')
 parser.add_argument('--openpose', type=str, default=None, help='Path to .json containing openpose detections')
 parser.add_argument('--outfile', type=str, default=None, help='Filename of output images. If not set use input filename.')
 
@@ -97,7 +97,13 @@ def process_image(img_file, bbox_file, openpose_file, input_res=224):
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    
+    # --checkpoint=data/model_checkpoint.pt --img=examples/im1010.jpg --openpose=examples/im1010_openpose.json
+    # args.checkpoint = 'data/model_checkpoint.pt'
+    # args.img = 'examples/im1010.jpg'
+    # args.bbox = 'examples/im1010_bbox.json'
+    # args.openpose = 'examples/im1010_openpose.json'
+
+
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     
     # Load pretrained model
@@ -118,7 +124,7 @@ if __name__ == '__main__':
     # Preprocess input image and generate predictions
     img, norm_img = process_image(args.img, args.bbox, args.openpose, input_res=constants.IMG_RES)
     with torch.no_grad():
-        pred_rotmat, pred_betas, pred_camera = model(norm_img.to(device))
+        pred_rotmat, pred_betas, pred_camera = model(norm_img.to(device)) # returns theta, beta, camera_params
         pred_output = smpl(betas=pred_betas, body_pose=pred_rotmat[:,1:], global_orient=pred_rotmat[:,0].unsqueeze(1), pose2rot=False)
         pred_vertices = pred_output.vertices
         
