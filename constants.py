@@ -1,4 +1,4 @@
-FOCAL_LENGTH = 5000.
+FOCAL_LENGTH = 70.5
 IMG_RES = 224
 
 # Mean and standard deviation for normalizing input image

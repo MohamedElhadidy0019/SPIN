@@ -10,7 +10,7 @@ LSP_ROOT = ''
 LSP_ORIGINAL_ROOT = ''
 LSPET_ROOT = ''
 MPII_ROOT = ''
-COCO_ROOT = ''
+COCO_ROOT = '/home/mohamed/repos/pose_estimation_task/SPIN/coco_2014'
 MPI_INF_3DHP_ROOT = ''
 PW3D_ROOT = ''
 UPI_S1H_ROOT = ''
@@ -21,7 +21,7 @@ DATASET_NPZ_PATH = 'data/dataset_extras'
 # Output folder to store the openpose detections
 # This is requires only in case you want to regenerate 
 # the .npz files with the annotations.
-OPENPOSE_PATH = 'datasets/openpose'
+OPENPOSE_PATH = '/home/mohamed/repos/pose_estimation_task/SPIN/coco_2014/openpose'
 
 # Path to test/train npz files
 DATASET_FILES = [ {'h36m-p1': join(DATASET_NPZ_PATH, 'h36m_valid_protocol1.npz'),

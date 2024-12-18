@@ -20,7 +20,7 @@ class FitsDict():
             try:
                 dict_file = os.path.join(options.checkpoint_dir, ds_name + '_fits.npy')
                 self.fits_dict[ds_name] = torch.from_numpy(np.load(dict_file))
-            except IOError:
+            except IOError: #! except is thown for coco dataset
                 # Dictionary does not exist, so populate with static fits
                 dict_file = os.path.join(config.STATIC_FITS_DIR, ds_name + '_fits.npy')
                 self.fits_dict[ds_name] = torch.from_numpy(np.load(dict_file))

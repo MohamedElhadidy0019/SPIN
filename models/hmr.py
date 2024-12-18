@@ -143,9 +143,9 @@ class HMR(nn.Module):
             xc = self.drop1(xc)
             xc = self.fc2(xc)
             xc = self.drop2(xc)
-            pred_pose = self.decpose(xc) + pred_pose
-            pred_shape = self.decshape(xc) + pred_shape
-            pred_cam = self.deccam(xc) + pred_cam
+            pred_pose = self.decpose(xc) + pred_pose # theta
+            pred_shape = self.decshape(xc) + pred_shape # beta
+            pred_cam = self.deccam(xc) + pred_cam  # camera params
         
         pred_rotmat = rot6d_to_rotmat(pred_pose).view(batch_size, 24, 3, 3)
 
